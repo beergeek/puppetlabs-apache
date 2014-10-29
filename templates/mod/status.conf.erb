@@ -1,12 +1,8 @@
 <Location /server-status>
     SetHandler server-status
-    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
-    Require ip <%= Array(@allow_from).join(" ") %>
-    <%- else -%>
     Order deny,allow
     Deny from all
     Allow from <%= Array(@allow_from).join(" ") %>
-    <%- end -%>
 </Location>
 ExtendedStatus <%= @extended_status %>
 
@@ -14,3 +10,13 @@ ExtendedStatus <%= @extended_status %>
     # Show Proxy LoadBalancer status in mod_status
     ProxyStatus On
 </IfModule>
+
+ProxyPass /server-status !
+<Location /server-status>
+  SetHandler server-status
+  Order deny,allow
+  Deny from all
+  Allow from 10.0.0.0/8
+  Satisfy any
+</Location>
+
